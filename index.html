@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medición de Ruedas de Locomotoras10 - GrupoMéxico</title>
+  <!-- Vinculación del archivo CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header image and background handled via CSS. Controls removed to avoid redundancy. -->
+
+  <!-- Encabezado -->
+  <header class="header">
+    <div class="header-left">
+      <img class="header-img" src="ge_es44ac_standard_dc_282-70459.webp" alt="Cabecera">
+      <div class="header-logo">GrupoMéxico</div>
+    </div>
+    <div class="header-title">
+      <h1>Medición de Ruedas</h1>
+    </div>
+  </header>
+
+  <!-- (Se eliminó el panel compacto duplicado) -->
+
+  <!-- Datos Generales -->
+  <div class="info-grid">
+    <div class="info-field"><label>LOCOMOTORA N°: <input id="inpLocomotora" type="text" placeholder="Número"></label>
+      <div class="info-message" id="locomotiveMessage"></div>
+    </div>
+    <div class="info-field"><label>FECHA: <input id="inpFecha" type="date"></label></div>
+    <div class="info-field"><label>HORÓMETRO: <input id="inpHorometro" type="text" placeholder="Horas"></label></div>
+    <div class="info-field"><label>MILLAS: <input id="inpMillas" type="text" placeholder="Millas"></label></div>
+    <div class="info-field span-2"><label>KWH: <input id="inpKwh" type="text" placeholder="KWH"></label></div>
+  </div>
+
+  <div class="actions no-print">
+    <button id="btnSave">Guardar</button>
+    <button id="btnPrint">Imprimir</button>
+    <button id="btnClear">Limpiar</button>
+  </div>
+  <div class="actions no-print" style="margin-top: 8px; align-items: center;">
+    <label for="appScriptUrl" style="font-size: 13px;">URL Web App Apps Script:</label>
+    <input id="appScriptUrl" type="text" placeholder="https://script.google.com/.../exec" style="min-width: 320px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
+  </div>
+
+  <!-- Resumen automático -->
+  <div class="summary" id="summary">
+    <div><strong>Resumen:</strong></div>
+    <div>Total ruedas medidas: <span id="countMeasured">0</span></div>
+    <div>Promedio gauge rueda: <span id="avgThickness">-</span></div>
+    <div>Promedio AT pestaña: <span id="avgFlangeThickness">-</span></div>
+    <div>Promedio gauge altura pestaña: <span id="avgFlangeHeight">-</span></div>
+    <div>Diferencia máxima gauge rueda: <span id="maxDiff">-</span></div>
+    <div>Ruedas bajo crítico (grosor): <span id="countCritical">0</span></div>
+    <div>Meses estimados hasta crítico (promedio): <span id="monthsToCritical">-</span></div>
+  </div>
+
+  <!-- Sección 1 -->
+  <div class="section-title">1. Medición de ruedas con el calibrador.</div>
+  
+  <div class="sec-1-grid">
+    <!-- Tabla Principal de Medidas -->
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">N° RUEDA</th>
+          <th colspan="2">ESPESOR DE RUEDA</th>
+           <th colspan="2">ESPESOR DE PESTAÑA</th>
+          <th colspan="2">ALTURA DE PESTAÑA</th>
+        </tr>
+        <tr>
+          <th>Gauge</th>
+          <th>Pulgadas</th>
+           <th>AT</th>
+           <th>Pulgadas</th>
+          <th>Gauge</th>
+          <th>Pulgadas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>D-1</td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-1" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-1</td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-1" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>D-2</td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-2" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-2</td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-2" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>D-3</td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-3" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-3</td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-3" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>D-4</td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-4" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-4</td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-4" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>D-5</td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-5" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-5</td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-5" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>D-6</td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="D-6" data-field="height_pulgadas"></td>
+        </tr>
+        <tr>
+          <td>I-6</td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="at"></td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="flange_thickness"></td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="height_gauge"></td>
+          <td><input type="number" step="any" data-wheel="I-6" data-field="height_pulgadas"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Tabla de Referencia de Calibrador -->
+    <table>
+      <thead>
+        <tr>
+          <th>AT</th>
+          <th>ESPESOR DE PESTAÑA</th>
+          <th>ALTURA DE PESTAÑA</th>
+          <th>Gauge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>1 31/64"</td><td>0 en 17</td><td>1 1/16"</td></tr>
+        <tr><td>2</td><td>1 13/32"</td><td>0 en 18</td><td>1 1/8"</td></tr>
+        <tr><td>3</td><td>1 23/64"</td><td>0 en 19</td><td>1 3/16"</td></tr>
+        <tr><td>4</td><td>1 21/64"</td><td>0 en 20</td><td>1 1/4"</td></tr>
+        <tr><td>5</td><td>1 19/32"</td><td>0 en 21</td><td>1 5/16"</td></tr>
+        <tr><td>6</td><td>1 1/4"</td><td>0 en 22</td><td>1 3/8"</td></tr>
+        <tr><td>7</td><td>1 13/64"</td><td>0 en 22</td><td>1 3/8"</td></tr>
+        <tr><td>8</td><td>1 9/64"</td><td>2 en 22</td><td>1 13/32"</td></tr>
+        <tr><td>9</td><td>1 5/64"</td><td>4 en 22</td><td>1 7/32"</td></tr>
+        <tr><td>10</td><td>1"</td><td>6 en 22</td><td>1 31/64"</td></tr>
+        <tr><td>11</td><td>57/64"</td><td>8 en 22</td><td>1 1/2"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sección 2 -->
+  <div class="section-title">2. Tolerancias mínimas y máximas para el torneado o cambio de ruedas.</div>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">PARÁMETRO</th>
+        <th colspan="2">ALERTA (SD70 / GP40-3 / GP31 / GE)</th>
+        <th colspan="2">CRÍTICO (SD70 / GP40-3 / GP71 / GE)</th>
+      </tr>
+      <tr>
+        <th>Pulgadas</th>
+        <th>Gauge</th>
+        <th>Pulgadas</th>
+        <th>Gauge</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-left"><strong>ESPESOR RUEDA</strong></td>
+        <td>1 1/16"</td>
+        <td>17</td>
+        <td>3/16"</td>
+        <td>16</td>
+      </tr>
+      <tr>
+        <td class="text-left"><strong>ESPESOR PESTAÑA</strong></td>
+        <td colspan="2">1 9/64" (AT: 8 WF)</td>
+        <td colspan="2">1 5/64" (AT: 9 WF)</td>
+      </tr>
+      <tr>
+        <td class="text-left"><strong>ALTURA PESTAÑA</strong></td>
+        <td>1 5/16"</td>
+        <td>0 en 21</td>
+        <td>2 3/8"</td>
+        <td>0 en 22</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Sección 3 -->
+  <div class="section-title">3. Límites recomendados para la medida de espesor de rueda.</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Modelo de Locomotora</th>
+        <th>GP40-3 / GP31</th>
+        <th>SD70</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-left">Ruedas de un mismo eje</td>
+        <td>1/16"</td>
+        <td>1/16"</td>
+      </tr>
+      <tr>
+        <td class="text-left">Ruedas en un mismo bogie</td>
+        <td>3/8"</td>
+        <td>1/4"</td>
+      </tr>
+      <tr>
+        <td class="text-left">Ruedas de una misma Locomotora</td>
+        <td>5/8"</td>
+        <td>5/8"</td>
+      </tr>
+      <tr>
+        <td class="text-left"><strong>DIF. MÁX. GROSOR RUEDA</strong></td>
+        <td>GP40, GP31, GE: 1/4"</td>
+        <td>SD70: 1/4"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Sección 4 -->
+  <div class="section-title">4. Condiciones en las que una rueda no debe considerarse utilizable (GP40, GP31, GE, SD70):</div>
+  <ol class="conditions-list">
+    <li>Cuando un aplanamiento sencillo sea de 63.5 mm (2 1/2") o más de largo, o dos aplanamientos adyacentes, cada uno 50.8 mm (2") o más de largo.</li>
+    <li>Cuando se presente un boquete o descascarado en la pestaña, mayor a 38.1 mm (1 ½") de largo y de 12.7 mm (½") de ancho.</li>
+    <li>Un punto descascarado de 63.5 mm (2 ½") o más de largo, o dos puntos adyacentes, cada uno de 50.8 mm (2") o más de largo.</li>
+    <li>Una costura longitudinal a menos de 95.25 mm (3 ½") de la pestaña.</li>
+    <li>Una pestaña desgastada con un espesor de 22.1 mm o menos, tomando la medida en un punto a 9.52 mm (3/8") sobre la pisada.</li>
+    <li>Una pestaña con una altura de 38.1 mm (1 ½") o más, medida desde la pisada hasta la parte superior de la pestaña.</li>
+    <li>Ruedas de menos de 25.4 mm (1") de espesor en una Locomotora en servicio a distancia, o 19.05 mm (3/8") de espesor en una Locomotora en servicio en patio.</li>
+    <li>No se debe usar soldadura por fusión en ruedas de acero de Locomotoras usadas en servicio a distancia.</li>
+    <li>Una cuarteadura o rotura en la pestaña, pisada, rueda, plato o cubo.</li>
+    <li>Una rueda suelta</li>
+  </ol>
+
+  <!-- Firmas -->
+  <div class="signatures-grid">
+    <div class="signature-box">
+      <div class="signature-field"><strong>MECÁNICO:</strong> ___________________________</div>
+      <div class="signature-field"><strong>REGISTRO:</strong> </div>
+    </div>
+    <div class="signature-box">
+      <div class="signature-field"><strong>ESPECIALISTA MECÁNICO:</strong> ___________________________</div>
+      <div class="signature-field"><strong>REGISTRO:</strong> ___________________________</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Vinculación del archivo JavaScript al final del body -->
+<script src="script.js"></script>
+</body>
+</html>
