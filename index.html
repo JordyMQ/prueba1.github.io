@@ -39,13 +39,15 @@
 
   <div class="actions no-print">
     <button id="btnSave">Guardar</button>
+    <button id="btnVerify">Verificar Web App</button>
     <button id="btnPrint">Imprimir</button>
     <button id="btnClear">Limpiar</button>
   </div>
   <div class="actions no-print" style="margin-top: 8px; align-items: center;">
     <label for="appScriptUrl" style="font-size: 13px;">URL Web App Apps Script:</label>
-    <input id="appScriptUrl" type="text" placeholder="https://script.google.com/.../exec" style="min-width: 320px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
+    <input id="appScriptUrl" type="text" value="https://script.google.com/macros/s/AKfycby439nAXkhgKvVQNM-9qpTUhFtc5zkOiFwzHBdLSm9IHZZdJ-76uUTSXRAJ7Np05-DC8Q/exec" placeholder="https://script.google.com/.../exec" style="min-width: 320px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
   </div>
+  <div class="save-status no-print" id="saveStatus" aria-live="polite"></div>
 
   <!-- Resumen automático -->
   <div class="summary" id="summary">
@@ -322,6 +324,6 @@
 </div>
 
 <!-- Vinculación del archivo JavaScript al final del body -->
-<script src="script.js"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
