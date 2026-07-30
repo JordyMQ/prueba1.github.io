@@ -250,20 +250,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveToGoogleSheets(payload) {
-        const url = (appScriptUrlInput ? appScriptUrlInput.value : '').trim() || (window.APPS_SCRIPT_URL || '').trim();
+        const url = (appScriptUrlInput ? appScriptUrlInput.value : '').trim();
         if (!url || url.includes('TU_URL_DEL_WEB_APP')) {
             return { ok: false, message: 'No se configuró la URL del Web App de Apps Script.' };
         }
 
+        console.log('Enviar a Apps Script:', url);
+        console.log('Payload enviado:', payload);
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         const text = await response.text();
         if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${text}`);
+            throw new Error(`HTTP ${response.status}: ${text}`);
         }
 
         try {
@@ -271,6 +272,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch {
             return { ok: true, result: text };
         }
+    }
+
+    const saveStatus = document.getElementById('saveStatus');
+
+    function setSaveStatus(message, success = true) {
+        if (!saveStatus) return;
+        saveStatus.textContent = message;
+        saveStatus.classList.toggle('success', success);
+        saveStatus.classList.toggle('error', !success);
     }
 
     const btnSave = document.getElementById('btnSave');
@@ -281,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             horometro: inpHor ? inpHor.value : undefined,
             millas: inpMillas ? inpMillas.value : undefined,
             kwh: inpKwh ? inpKwh.value : undefined,
-            measures: {}
+            measures: []
         };
 
         // Collect table numeric inputs
@@ -291,13 +301,21 @@ document.addEventListener('DOMContentLoaded', () => {
             rows.forEach(row => {
                 const wheel = row.querySelector('td') && row.querySelector('td').textContent.trim();
                 if (!wheel) return;
-                data.measures[wheel] = {};
+                const measureRow = { wheel };
+                let hasValue = false;
                 const inputs = row.querySelectorAll('input[data-field]');
                 inputs.forEach(inp => {
                     const field = inp.getAttribute('data-field');
                     const val = inp.value;
-                    data.measures[wheel][field] = val === '' ? null : Number(val);
+                    const numberValue = val === '' ? null : Number(val);
+                    measureRow[field] = numberValue;
+                    if (numberValue != null) {
+                        hasValue = true;
+                    }
                 });
+                if (hasValue) {
+                    data.measures.push(measureRow);
+                }
             });
         }
 
@@ -314,13 +332,35 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const sheetResult = await saveToGoogleSheets(data);
             if (sheetResult.ok) {
-                alert('Guardado localmente y enviado a Google Sheets');
+                const versionInfo = sheetResult.result && sheetResult.result.version ? ` (versión Apps Script: ${sheetResult.result.version})` : '';
+                const savedRows = sheetResult.result && sheetResult.result.rows ? sheetResult.result.rows : '?';
+                setSaveStatus(`Guardado localmente y enviado a Google Sheets. Filas: ${savedRows}${versionInfo}`, true);
             } else {
-                alert('Guardado localmente. No se pudo enviar a Google Sheets: ' + sheetResult.message);
+                setSaveStatus('Guardado localmente. No se pudo enviar a Google Sheets: ' + sheetResult.message, false);
             }
         } catch (error) {
             console.error('Error al enviar a Google Sheets:', error);
-            alert('Guardado localmente, pero no se pudo enviar a Google Sheets. Revisa la URL del Web App.');
+            setSaveStatus('Guardado localmente, pero no se pudo enviar a Google Sheets. Error: ' + (error.message || error), false);
+        }
+    });
+
+    const btnVerify = document.getElementById('btnVerify');
+    if (btnVerify) btnVerify.addEventListener('click', async () => {
+        const url = (appScriptUrlInput ? appScriptUrlInput.value : '').trim();
+        if (!url) {
+            setSaveStatus('No se configuró la URL del Web App de Apps Script.', false);
+            return;
+        }
+        try {
+            const response = await fetch(url, { method: 'GET', cache: 'no-store' });
+            const text = await response.text();
+            if (response.ok) {
+                setSaveStatus(`Web App activa: ${text}`, true);
+            } else {
+                setSaveStatus(`Web App respondió con error: ${response.status} ${text}`, false);
+            }
+        } catch (err) {
+            setSaveStatus(`Error al verificar Web App: ${err.message || err}`, false);
         }
     });
 
@@ -347,14 +387,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const table = document.querySelector('.sec-1-grid table');
         if (table) {
             const rows = table.querySelectorAll('tbody tr');
+            const measuresByWheel = Array.isArray(saved.measures)
+                ? saved.measures.reduce((acc, item) => {
+                    if (item && item.wheel) acc[item.wheel] = item;
+                    return acc;
+                }, {})
+                : saved.measures;
             rows.forEach(row => {
                 const wheel = row.querySelector('td') && row.querySelector('td').textContent.trim();
                 if (!wheel) return;
                 const inputs = row.querySelectorAll('input[data-field]');
                 inputs.forEach(inp => {
                     const field = inp.getAttribute('data-field');
-                    if (saved.measures[wheel] && saved.measures[wheel][field] != null) {
-                        inp.value = saved.measures[wheel][field];
+                    if (measuresByWheel[wheel] && measuresByWheel[wheel][field] != null) {
+                        inp.value = measuresByWheel[wheel][field];
                     }
                 });
             });
